@@ -2,22 +2,28 @@ const mongoose = require('mongoose')
 
 const PurchaseSchema = new mongoose.Schema({
 
-    restaurantId: {
-        type: Number,
+    restaurant: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Restaurant',
         required: true,
     },
 
-    userId: Number, // Para compras pelo app
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
 
     device: {
         type: String,
         required: true, // Tipo de dispositivo >>> APP ou WEB
     },
 
-    products: {
-        type: [],
+    products: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
         required: true,
-    },
+    }],
 
     priceTotal: {
         type: Number,

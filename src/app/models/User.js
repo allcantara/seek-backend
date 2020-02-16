@@ -1,5 +1,6 @@
+// @ts-nocheck
 const mongoose = require('mongoose')
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs')
 
 const UserSchema = new mongoose.Schema({
 
@@ -21,6 +22,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         require: true,
         required: false,
+        select: false,
         minlength: 8,
         maxlength: 30,
     },
@@ -44,6 +46,17 @@ const UserSchema = new mongoose.Schema({
     typeUser: {
         type: String,
         required: true,
+        select: false,
+    },
+
+    passwordResetToken: {
+        type: String,
+        select: false,
+    },
+
+    passwordResetExpires: {
+        type: Date,
+        select: false,
     },
 
     createdAt: {
