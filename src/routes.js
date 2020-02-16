@@ -10,17 +10,25 @@ const PurchaseController = require('./app/controllers/PurchaseController')
 const routes = Router()
 
 routes.post('/user', UserController.store)
+
 routes.post('/login', UserController.login)
 routes.post('/forgot_password', ForgotController.forgot)
 routes.post('/reset_password', ForgotController.reset)
 
 routes.use(authMiddleware) // Verificação de token
 
+routes.put('/user/:id', UserController.update)
+routes.delete('/user/:id', UserController.delete)
+routes.get('/user/:id', UserController.show)
+routes.get('/user', UserController.index)
+
 routes.post('/restaurant', RestaurantController.store)
 routes.put('/restaurant/:id', RestaurantController.update)
 routes.delete('/restaurant/:id', RestaurantController.delete)
 routes.get('/restaurant/:id', RestaurantController.show)
 routes.get('/restaurant', RestaurantController.index)
+
+routes.get('/restaurant/products/:id', RestaurantController.indexProducts)
 
 routes.post('/product', ProductController.store)
 routes.put('/product/:id', ProductController.update)

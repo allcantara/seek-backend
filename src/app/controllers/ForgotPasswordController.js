@@ -51,7 +51,6 @@ module.exports = {
 
   async reset(req, res) {
     try {
-
       const { email, token, password } = req.body
       const user =  await User.findOne({ email }).select('+passwordResetToken passwordResetExpires')
 
@@ -65,6 +64,8 @@ module.exports = {
         return res.status(401).send({ message: 'Token expirado! Por favor, gere um novo token!' })
 
       user.password = password
+      user.passwordResetToken = null
+      user.passwordResetExpires = null
       await user.save()
       
       return res.status(200).send()

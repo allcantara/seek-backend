@@ -56,7 +56,74 @@ module.exports = {
             console.log(error)
             return res.status(400).send({ message: 'Falha na autenticação!', error })
         }
-    }
+    },
+
+    async update(req, res) {
+        try {
+            const { username, typeUser, email } = req.body
+            if(!username || !typeUser || !email)
+              return res.status(401).send({ message: 'Todos os campos são obrigatórios!' })
+
+            const user = await User.findById(req.params.id)
+
+            if(!user)
+                return res.status(401).send({ message: 'Este usuário não existe!' })
+
+            if(user.email !== email && await User.findOne({ email })) 
+              return res.status(400).send({ message: 'Este e-mail não pode ser utilizado!' })
+
+            const data = { username, typeUser, email }
+            const userRes = await User.findByIdAndUpdate(req.params.id, {
+              ...data
+            }, { new: true })
+            
+            return res.status(200).send(userRes)
+        } catch (error) {
+        console.log(error)
+        return res.status(400).send({ message: 'Falha na requisição!', error })
+        }
+    },
+
+    async delete(req, res) {
+        try {
+            const { id } = req.params
+            if(!await User.findById(id))
+              return res.status(400).send({ message: 'Este usuário não existe!' })
+      
+            await User.findByIdAndRemove(id)
+      
+            return res.status(200).send({ message: 'Registro deletado com sucesso!' })
+          } catch (error) {
+            console.log(error)
+            return res.status(400).send({ message: 'Falha na requisição!', error })
+          }
+    },
+
+    async show(req, res) {
+        try {
+            const { id } = req.params
+            const user = await User.findById(id)
+      
+            if(!user)
+              return res.status(400).send({ message: 'Este usuário não existe!' })
+      
+            return res.status(200).send(user)
+          } catch (error) {
+        console.log(error)
+        return res.status(400).send({ message: 'Falha na requisição!', error })
+        }
+    },
+
+    async index(req, res) {
+        try {
+            const users = await User.find()
+      
+            return res.status(200).send(users)
+        } catch (error) {
+        console.log(error)
+        return res.status(400).send({ message: 'Falha na requisição!', error })
+        }
+    },
 
 }
 

@@ -1,6 +1,7 @@
 // @ts-nocheck
 const Restaurant = require('../models/Restaurant')
 const User = require('../models/User')
+const Product = require('../models/Product')
 const typeUser = require('../../config/typeUser.json')
 
 
@@ -13,8 +14,8 @@ module.exports = {
       if(!id || !name || !addressName || !addressNumber || !addressCity || !addressCep)
         return res.status(401).send({ message: 'Todos os campos são obrigatórios!' })
 
-      const userRec = await User.findById(id);
-
+      const userRec = await User.findById(id).select('+typeUser');
+      
       if(!userRec)
         return res.status(401).send({ message: 'Um usuário existente deve ser vinculado!' })
 
@@ -35,25 +36,19 @@ module.exports = {
 
   async update(req, res) {
     try {
-
       const { name, addressName, addressNumber, addressCity, addressCep } = req.body
 
       if(!name || !addressName || !addressNumber || !addressCity || !addressCep)
         return res.status(401).send({ message: 'Todos os campos são obrigatórios!' })
 
-      const { id: _id } = req.params
-
-      let restaurant = await Restaurant.findOne({ _id })
-
-      if(!restaurant)
+      if(!await Restaurant.findById(req.params.id))
         return res.status(401).send({ message: 'Este restaurante não existe!' })
 
-      restaurant = { ...req.body }
-      
-      await restaurant.save()
+      const restaurant = await Restaurant.findByIdAndUpdate(req.params.id, {
+        ...req.body
+      }, { new: true })
       
       return res.status(200).send(restaurant)
-      
     } catch (error) {
       console.log(error)
       return res.status(400).send({ message: 'Falha na requisição!', error })
@@ -62,9 +57,13 @@ module.exports = {
 
   async delete(req, res) {
     try {
-      
+      const { id } = req.params
+      if(!await Restaurant.findById(id))
+        return res.status(400).send({ message: 'Este restaurante não existe!' })
 
-      return res.status(200).send({ ok: true })
+      await Restaurant.findByIdAndRemove(id)
+
+      return res.status(200).send({ message: 'Registro deletado com sucesso!' })
     } catch (error) {
       console.log(error)
       return res.status(400).send({ message: 'Falha na requisição!', error })
@@ -74,7 +73,6 @@ module.exports = {
   async show(req, res) {
     try {
       const { id } = req.params
-
       const restaurant = await Restaurant.findById(id).populate('user') // EAGER
 
       if(!restaurant)
@@ -92,6 +90,18 @@ module.exports = {
       const restaurants = await Restaurant.find()
 
       return res.status(200).send(restaurants)
+    } catch (error) {
+      console.log(error)
+      return res.status(400).send({ message: 'Falha na requisição!', error })
+    }
+  },
+
+  async indexProducts(req, res) {
+    try {
+      const { id: restaurant } = req.params
+      const products = await Product.find({ restaurant })
+
+      return res.status(200).send(products)
     } catch (error) {
       console.log(error)
       return res.status(400).send({ message: 'Falha na requisição!', error })

@@ -11,11 +11,13 @@ const ProductSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
+        uppercase: true,
     },
 
     ingredients: {
         type: [],
         required: true,
+        uppercase: true,
     },
 
     price: {

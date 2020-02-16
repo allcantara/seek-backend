@@ -51,6 +51,7 @@ const UserSchema = new mongoose.Schema({
 
     passwordResetToken: {
         type: String,
+        unique: true,
         select: false,
     },
 
