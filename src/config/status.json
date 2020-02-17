@@ -1,0 +1,6 @@
+{
+    "PROGRESS": "IN_PROGRESS",
+    "CANCELED": "CANCELED",
+    "FINISHED": "FINISHED",
+    "DELIVERY": "DELIVERY"
+}

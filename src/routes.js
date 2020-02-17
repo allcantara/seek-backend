@@ -38,7 +38,7 @@ routes.get('/product', ProductController.index)
 
 routes.post('/purchase', PurchaseController.store)
 routes.put('/purchase/:id', PurchaseController.update)
-routes.delete('/purchase/:id', PurchaseController.delete)
+routes.put('/purchase/canceled/:id', PurchaseController.canceled)
 routes.get('/purchase/:id', PurchaseController.show)
 routes.get('/purchase', PurchaseController.index)
 

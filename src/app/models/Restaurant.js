@@ -17,21 +17,25 @@ const RestaurantSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
+        uppercase: true,
     },
 
     addressName: {
         type: String,
         required: true,
+        uppercase: true,
     },
 
     addressNumber: {
         type: String,
         required: true,
+        uppercase: true,
     },
 
     addressCity: {
         type: String,
         required: true,
+        uppercase: true,
     },
 
     addressCep: {

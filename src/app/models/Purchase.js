@@ -16,12 +16,14 @@ const PurchaseSchema = new mongoose.Schema({
     device: {
         type: String,
         required: true, // Tipo de dispositivo >>> APP ou WEB
+        uppercase: true,
     },
 
     products: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
+        ref: 'ItemPurchase',
         required: true,
+        unique: false,
     }],
 
     priceTotal: {
@@ -32,6 +34,7 @@ const PurchaseSchema = new mongoose.Schema({
     payment: {
         type: String,
         required: true,
+        uppercase: true,
     },
 
     dateTime: {
@@ -46,7 +49,7 @@ const PurchaseSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
-     },
+    },
     
     createdAt: {
         type: Date,

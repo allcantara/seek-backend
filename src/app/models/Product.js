@@ -14,11 +14,11 @@ const ProductSchema = new mongoose.Schema({
         uppercase: true,
     },
 
-    ingredients: {
-        type: [],
+    ingredients: [{
+        type: String,
         required: true,
         uppercase: true,
-    },
+    }],
 
     price: {
         type: Number,
