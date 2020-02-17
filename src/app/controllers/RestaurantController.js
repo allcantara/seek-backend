@@ -1,4 +1,5 @@
 // @ts-nocheck
+const crypto = require('crypto')
 const Restaurant = require('../models/Restaurant')
 const User = require('../models/User')
 const Product = require('../models/Product')

@@ -15,7 +15,7 @@ routes.post('/login', UserController.login)
 routes.post('/forgot_password', ForgotController.forgot)
 routes.post('/reset_password', ForgotController.reset)
 
-routes.use(authMiddleware) // Verificação de token
+routes.use(authMiddleware)
 
 routes.put('/user/:id', UserController.update)
 routes.delete('/user/:id', UserController.delete)
