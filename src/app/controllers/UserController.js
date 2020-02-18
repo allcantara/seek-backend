@@ -72,7 +72,7 @@ module.exports = {
             if(user.email !== email && await User.findOne({ email })) 
               return res.status(400).send({ message: 'Este e-mail não pode ser utilizado!' })
 
-            const data = { username, typeUser, email }
+            const data = { username, typeUser, email, updatedAt: Date.now() }
             const userRes = await User.findByIdAndUpdate(req.params.id, {
               ...data
             }, { new: true })

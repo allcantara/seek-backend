@@ -46,7 +46,8 @@ module.exports = {
         return res.status(401).send({ message: 'Este restaurante não existe!' })
 
       const restaurant = await Restaurant.findByIdAndUpdate(req.params.id, {
-        ...req.body
+        ...req.body,
+        updatedAt: Date.now()
       }, { new: true })
       
       return res.status(200).send(restaurant)

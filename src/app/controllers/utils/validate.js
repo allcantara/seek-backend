@@ -2,18 +2,19 @@ const Product = require('../../models/Product')
 const User = require('../../models/User')
 const Restaurant = require('../../models/Restaurant')
 const devicesConfig = require('../../../config/devices.json')
+const statusConfig = require('../../../config/status.json')
 
 module.exports = {
     
-    async validateFieldsStore (restaurantId,userId, device, productsList, priceTotal, payment, tableNumber, clientName) {
+    async validateFieldsStore (restaurantId, userId, device, productsList, priceTotal, payment, tableNumber, clientName) {
         if(!device)
-            return { error: true, message: 'O tipo de dispositivo não foi informado!' }
+            return { error: true, message: 'Não foi possível identificar o tipo de dispositivo!' }
       
         if(!restaurantId) 
-          return { error: true, message: 'O ID do restaurante é obrigatório!' }
+          return { error: true, message: 'Não foi possível identificar o restaurante!' }
       
         if(!productsList || productsList.length === 0)
-          return  { error: true, message: 'Um produto deve ser inserido para a compra!' }
+          return  { error: true, message: 'Não foi possível identificar os produtos!' }
       
         if(!payment)
           return { error: true, message: 'A forma de pagamento deve ser informada!' }
@@ -23,7 +24,7 @@ module.exports = {
       
         if(device === devicesConfig.APP) {
           if(!userId || userId === "")
-            return { error: true, message: 'O ID do usuário deve ser informado!' }
+            return { error: true, message: 'Não foi possível identificar o usuário da compra!' }
       
           if(!await User.findById(userId))
             return { error: true, message: 'Este usuário não existe!' }
@@ -40,10 +41,20 @@ module.exports = {
         productsList.map(async product => {
           const { item: itemId } = product
           if(!await Product.findById(itemId))
-            return { error: true, message: 'Algum dos produtos informados não possui cadastro!' }
+            return { error: true, message: 'Algum dos produtos informado não possui cadastro!' }
         })
 
         return { error: false }
+    },
+
+    validadePurchaseAfterOrder(purchase) {
+      if(purchase.status === statusConfig.FINISHED) 
+        return { isValid: false, message: 'Este pedido já foi finalizado!' }
+
+      if(purchase.status === statusConfig.CANCELED) 
+        return { isValid: false, message: 'Este pedido já foi cancelado!' }
+
+      return { isValid: true }
     },
 
 

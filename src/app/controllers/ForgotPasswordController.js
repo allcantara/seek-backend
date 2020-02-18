@@ -39,7 +39,7 @@ module.exports = {
         }
       })
 
-      return res.status(200).send()
+      return res.status(200).send({ ok: true })
     } catch(error) {
       console.log(error)
       return res.status(400).send({
@@ -61,14 +61,15 @@ module.exports = {
         return res.status(401).send({ message: 'O token de alteração é inválido!' })
 
       if(new Date() > user.passwordResetExpires)
-        return res.status(401).send({ message: 'Token expirado! Por favor, gere um novo token!' })
+        return res.status(401).send({ message: 'Token expirado! Por favor, solicite uma nova mudança de senha!' })
 
       user.password = password
+      user.updatedAt = Date.now()
       user.passwordResetToken = null
       user.passwordResetExpires = null
       await user.save()
       
-      return res.status(200).send()
+      return res.status(200).send({ ok: true })
     } catch(error) {
       console.log(error)
       return res.status(400).send({

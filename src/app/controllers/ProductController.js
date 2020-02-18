@@ -44,7 +44,8 @@ module.exports = {
       const data = {
         name,
         ingredients: ingredientsList,
-        price
+        price,
+        updatedAt: Date.now()
       }
 
       const product = await Product.findByIdAndUpdate(req.params.id, {

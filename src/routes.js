@@ -38,8 +38,9 @@ routes.get('/product', ProductController.index)
 
 routes.post('/purchase', PurchaseController.store)
 routes.put('/purchase/:id', PurchaseController.update)
-routes.put('/purchase/canceled/:id', PurchaseController.canceled)
 routes.get('/purchase/:id', PurchaseController.show)
 routes.get('/purchase', PurchaseController.index)
+routes.post('/purchase/cancel/:id', PurchaseController.cancel)
+routes.post('/purchase/finish/:id', PurchaseController.finish)
 
 module.exports = routes

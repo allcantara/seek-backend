@@ -6,7 +6,7 @@ const devicesConfig = require('../../config/devices.json')
 
 const statusConfig = require('../../config/status.json')
 
-const { validateFieldsStore } = require('./utils/validate')
+const { validateFieldsStore, validadePurchaseAfterOrder } = require('./utils/validate')
 
 
 module.exports = {
@@ -82,7 +82,8 @@ module.exports = {
         tableNumber,
         clientName,
         status: statusConfig.PROGRESS,
-        products
+        products,
+        updatedAt: Date.now()
       }
 
       const newPurchase = await Purchase.findByIdAndUpdate(purchaseId, {
@@ -90,23 +91,6 @@ module.exports = {
       }, { new: true })
       
       return res.status(200).send(newPurchase)
-    } catch (error) {
-      console.log(error)
-      return res.status(400).send({ message: 'Falha na requisição!', error })
-    }
-  },
-
-  async canceled(req, res) {
-    try {
-      const { id } = req.params
-      if(!await Purchase.findById(id))
-        return res.status(400).send({ message: 'Esta compra não esta cadastrada!' })
-
-      await Purchase.findByIdAndUpdate(id, {
-        status: statusConfig.CANCELED
-      })
-
-      return res.status(200).send({ message: 'Registro cancelado com sucesso!' })
     } catch (error) {
       console.log(error)
       return res.status(400).send({ message: 'Falha na requisição!', error })
@@ -139,6 +123,50 @@ module.exports = {
     try {
       const purchases = await Purchase.find().populate(['restaurant', 'user'])
       return res.status(200).send(purchases)
+    } catch (error) {
+      console.log(error)
+      return res.status(400).send({ message: 'Falha na requisição!', error })
+    }
+  },
+
+  async cancel(req, res) {
+    try {
+      const { id } = req.params
+      const purchase = await Purchase.findById(id)
+      if(!purchase)
+        return res.status(400).send({ message: 'Esta compra não esta cadastrada!' })
+
+      const validatePurchase = validadePurchaseAfterOrder(purchase)
+      if(!validatePurchase.isValid)
+        return res.status(401).send({ message: validatePurchase.message })
+
+      await Purchase.findByIdAndUpdate(id, {
+        status: statusConfig.CANCELED
+      })
+
+      return res.status(200).send({ message: 'Registro cancelado com sucesso!' })
+    } catch (error) {
+      console.log(error)
+      return res.status(400).send({ message: 'Falha na requisição!', error })
+    }
+  },
+
+  async finish(req, res) {
+    try {
+      const { id } = req.params
+      const purchase = await Purchase.findById(id)
+      if(!purchase)
+        return res.status(400).send({ message: 'Esta compra não esta cadastrada!' })
+
+      const validatePurchase = validadePurchaseAfterOrder(purchase)
+      if(!validatePurchase.isValid)
+        return res.status(401).send({ message: validatePurchase.message })
+
+      await Purchase.findByIdAndUpdate(id, {
+        status: statusConfig.FINISHED
+      })
+
+      return res.status(200).send({ message: 'Registro finalizado com sucesso!' })
     } catch (error) {
       console.log(error)
       return res.status(400).send({ message: 'Falha na requisição!', error })
