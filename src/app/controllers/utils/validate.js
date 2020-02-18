@@ -49,10 +49,10 @@ module.exports = {
 
     validadePurchaseAfterOrder(purchase) {
       if(purchase.status === statusConfig.FINISHED) 
-        return { isValid: false, message: 'Este pedido já foi finalizado!' }
+        return { isValid: false, message: 'Este pedido foi finalizado!' }
 
       if(purchase.status === statusConfig.CANCELED) 
-        return { isValid: false, message: 'Este pedido já foi cancelado!' }
+        return { isValid: false, message: 'Este pedido foi cancelado!' }
 
       return { isValid: true }
     },

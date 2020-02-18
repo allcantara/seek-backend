@@ -42,5 +42,6 @@ routes.get('/purchase/:id', PurchaseController.show)
 routes.get('/purchase', PurchaseController.index)
 routes.post('/purchase/cancel/:id', PurchaseController.cancel)
 routes.post('/purchase/finish/:id', PurchaseController.finish)
+routes.post('/purchase/delay/:id', PurchaseController.delay)
 
 module.exports = routes

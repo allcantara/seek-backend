@@ -42,6 +42,14 @@ const PurchaseSchema = new mongoose.Schema({
         default: new Date(),
     },
 
+    code: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+
+    delay: Date,
+
     tableNumber: Number, // Para compras no estabelecimanto
 
     clientName: String, // Para compras no estabelecimento

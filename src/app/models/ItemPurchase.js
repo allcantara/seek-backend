@@ -12,6 +12,17 @@ const ItemPuchaseSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+
+    code: {
+        type: String,
+        required: true,
+        unique: false,
+    },
+
+    createdAt: {
+        type: Date,
+        default: Date.now(),
+    },
 })
 
 const ItemPurchase = mongoose.model('ItemPurchase', ItemPuchaseSchema)

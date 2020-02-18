@@ -7,6 +7,7 @@ const devicesConfig = require('../../config/devices.json')
 const statusConfig = require('../../config/status.json')
 
 const { validateFieldsStore, validadePurchaseAfterOrder } = require('./utils/validate')
+const { generateCode } = require('./utils/genetareCode')
 
 
 module.exports = {
@@ -14,6 +15,7 @@ module.exports = {
   async store(req, res) {
     try {
       let products = []
+      const code = generateCode(4)
       const { restaurant: restaurantId, user: userId, device, products: productsList, priceTotal, payment, tableNumber, clientName } = req.body
 
       const valid = await validateFieldsStore(restaurantId,userId, device, productsList, priceTotal, payment, tableNumber, clientName)
@@ -22,10 +24,11 @@ module.exports = {
       
       await Promise.all(productsList.map(async prod => {
         const { item: product, amount } = prod
-        const itemPurchase = new ItemPurchase({ product, amount  })
+        const itemPurchase = new ItemPurchase({ product, amount, code  })
         await itemPurchase.save()
-        products.push(itemPurchase._id) 
+        products.push(itemPurchase._id)
       }))
+
       
       const data = {
         restaurant: restaurantId,
@@ -35,6 +38,7 @@ module.exports = {
         payment,
         tableNumber,
         clientName,
+        code: String(code),
         status: statusConfig.PROGRESS,
         products
       }
@@ -58,19 +62,23 @@ module.exports = {
         return res.status(401).send({ error: valid.error, message: valid.message })
 
       const purchase = await Purchase.findById(purchaseId).populate('products')
-
+      
       if(!purchase) 
         return res.status(401).send({ message: 'Esta compra não foi cadastrada!' })
 
+      const validatePurchase = validadePurchaseAfterOrder(purchase)
+      if(!validatePurchase.isValid)
+        return res.status(401).send({ message: validatePurchase.message })
+      
       purchase.products = []
 
       await Promise.all(productsList.map(async prod => {
         const { item: product, amount } = prod
-        const item = await ItemPurchase.findById(product)
-        if(item) await ItemPurchase.findByIdAndDelete(item._id)
-        const itemPurchase = new ItemPurchase({ product, amount  })
+        const { code } = purchase
+        await ItemPurchase.deleteMany({ code })
+        const itemPurchase = new ItemPurchase({ product, amount, code  })
         await itemPurchase.save()
-        products.push(itemPurchase._id) 
+        products.push(itemPurchase._id)
       }))
       
       const data = {
@@ -167,6 +175,36 @@ module.exports = {
       })
 
       return res.status(200).send({ message: 'Registro finalizado com sucesso!' })
+    } catch (error) {
+      console.log(error)
+      return res.status(400).send({ message: 'Falha na requisição!', error })
+    }
+  },
+
+  async delay(req, res) {
+    try {
+      const { id } = req.params
+      const { delay } = req.body
+      const purchase = await Purchase.findById(id)
+      if(!purchase)
+        return res.status(400).send({ message: 'Esta compra não esta cadastrada!' })
+
+      const validatePurchase = validadePurchaseAfterOrder(purchase)
+      if(!validatePurchase.isValid)
+        return res.status(401).send({ message: validatePurchase.message })
+
+      if(purchase.status === statusConfig.DELAY) 
+        return res.status(401).send({ message: 'O atraso já foi informado!' })
+
+        const dateTimeDelay = new Date()
+        dateTimeDelay.setMinutes(dateTimeDelay.getMinutes() + parseInt(delay))
+
+      await Purchase.findByIdAndUpdate(id, {
+        status: statusConfig.DELAY,
+        delay: dateTimeDelay,
+      })
+
+      return res.status(200).send({ message: 'Atraso registrado!' })
     } catch (error) {
       console.log(error)
       return res.status(400).send({ message: 'Falha na requisição!', error })
