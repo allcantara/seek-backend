@@ -19,9 +19,9 @@ module.exports = {
       const code = generateCode(4);
       const {
         restaurant: restaurantId,
+        products: productsList,
         user: userId,
         device,
-        products: productsList,
         priceTotal,
         payment,
         tableNumber,

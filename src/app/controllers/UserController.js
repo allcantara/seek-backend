@@ -13,9 +13,9 @@ function generateToken({ id }) {
 module.exports = {
   async store(req, res) {
     try {
-      const { email, password, name, surname, typeUser } = req.body;
+      const { username, email, password, name, surname, typeUser } = req.body;
 
-      if (!email || !password || !name || !surname || !typeUser)
+      if (!email || !username || !password || !name || !surname || !typeUser)
         return res
           .status(401)
           .send({ message: "Todos os campos são obrigatórios!" });
@@ -24,9 +24,9 @@ module.exports = {
         return res.status(400).send({ message: "Este usuário já existe!" });
 
       const data = req.body;
-      const user = await User.create(data);
-      user.password = undefined;
-      return res.send({ user });
+      // const user = await User.create(data);
+      // user.password = undefined;
+      return res.send({ data });
     } catch (error) {
       console.log(error);
       return res
