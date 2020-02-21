@@ -155,5 +155,22 @@ module.exports = {
       console.log(error);
       return res.status(400).send({ message: "Falha na requisição!", error });
     }
+  },
+
+  async showRestaurantInUser(req, res) {
+    try {
+      const { id } = req.params;
+      const restaurant = await Restaurant.findOne({ user: id })
+
+      if (!restaurant)
+        return res
+          .status(202)
+          .send({ message: "Este restaurante não existe!" });
+
+      return res.status(200).send(restaurant);
+    } catch (error) {
+      console.log(error);
+      return res.status(400).send({ message: "Falha na requisição!", error });
+    }
   }
 };

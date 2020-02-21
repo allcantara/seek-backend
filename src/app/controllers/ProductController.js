@@ -10,12 +10,12 @@ module.exports = {
 
       if (!restaurantId || !name || !ingredients || (!price && price <= 0))
         return res
-          .status(401)
+          .status(202)
           .send({ message: "Todos os campos são obrigatórios!" });
 
       if (!(await Restaurant.findById(restaurantId)))
         return res
-          .status(401)
+          .status(203)
           .send({ message: "Este restaurante não existe!" });
 
       const ingredientsList = ingredients.trim().split(", ");
@@ -43,11 +43,11 @@ module.exports = {
       const { name, ingredients, price } = req.body;
 
       if (!name || !ingredients || (!price && price <= 0))
-        return res.status(401).send({ message: "Todos os campos são obrigatórios!" });
+        return res.status(203).send({ message: "Todos os campos são obrigatórios!" });
 
       const productExist = await Product.findById(req.params.id);
       if(!productExist)
-        return res.status(401).send({ message: "Este produto não existe!" });
+        return res.status(202).send({ message: "Este produto não existe!" });
 
       const ingredientsList = ingredients.trim().split(", ");
 
@@ -75,7 +75,7 @@ module.exports = {
     try {
       const { id } = req.params;
       if (!(await Product.findById(id)))
-        return res.status(400).send({ message: "Este produto não existe!" });
+        return res.status(202).send({ message: "Este produto não existe!" });
 
       await Product.findByIdAndRemove(id);
 
@@ -92,7 +92,7 @@ module.exports = {
       const product = await Product.findById(id);
 
       if (!product)
-        return res.status(400).send({ message: "Este produto não existe!" });
+        return res.status(202).send({ message: "Este produto não existe!" });
 
       const ingredients = product.ingredients.join(", ");
       product.ingredients = ingredients;

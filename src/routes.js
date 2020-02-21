@@ -31,6 +31,8 @@ routes.delete("/restaurant/:id", RestaurantController.delete);
 routes.get("/restaurant/:id", RestaurantController.show);
 routes.get("/restaurant", RestaurantController.index);
 
+routes.get("/restaurant/user/:id", RestaurantController.showRestaurantInUser);
+
 routes.get("/restaurant/products/:id", RestaurantController.indexProducts);
 
 routes.post("/product", upload.single('image'), ProductController.store);

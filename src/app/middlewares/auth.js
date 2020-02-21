@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const authConfig = require("../../config/auth.json");
 
 module.exports = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization; 
 
   if (!authHeader)
     return res.status(401).send({ error: "O token não foi informado!" });
@@ -18,9 +18,8 @@ module.exports = (req, res, next) => {
   if (!/^Bearer$/i.test(scheme))
     return res.status(401).send({ error: "Formato do token inválido!" });
 
-  jwt.verify(token, authConfig.secret, async (err, decoded) => {
+  jwt.verify(token, authConfig.secret, function(err, decoded) {
     if (err) return res.status(401).send({ error: "Token inválido!" });
-
     return next();
   });
 };
