@@ -1,4 +1,6 @@
 const { Router } = require("express");
+const multer = require('multer');
+const uploadConfig = require('./config/upload');
 const authMiddleware = require("./app/middlewares/auth");
 const UserController = require("./app/controllers/UserController");
 const ForgotController = require("./app/controllers/ForgotPasswordController");
@@ -8,7 +10,9 @@ const PurchaseController = require("./app/controllers/PurchaseController");
 
 const routes = Router();
 
-routes.post("/user", UserController.store);
+const upload = multer(uploadConfig);
+
+routes.post("/user", upload.single('image'), UserController.store);
 
 routes.post("/login", UserController.login);
 routes.post("/forgot_password", ForgotController.forgot);
@@ -21,7 +25,7 @@ routes.delete("/user/:id", UserController.delete);
 routes.get("/user/:id", UserController.show);
 routes.get("/user", UserController.index);
 
-routes.post("/restaurant", RestaurantController.store);
+routes.post("/restaurant", upload.single('image'), RestaurantController.store);
 routes.put("/restaurant/:id", RestaurantController.update);
 routes.delete("/restaurant/:id", RestaurantController.delete);
 routes.get("/restaurant/:id", RestaurantController.show);
@@ -29,7 +33,7 @@ routes.get("/restaurant", RestaurantController.index);
 
 routes.get("/restaurant/products/:id", RestaurantController.indexProducts);
 
-routes.post("/product", ProductController.store);
+routes.post("/product", upload.single('image'), ProductController.store);
 routes.put("/product/:id", ProductController.update);
 routes.delete("/product/:id", ProductController.delete);
 routes.get("/product/:id", ProductController.show);

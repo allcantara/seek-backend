@@ -13,8 +13,11 @@ function generateToken({ id }) {
 module.exports = {
   async store(req, res) {
     try {
-      const { username, email, password, name, surname, typeUser } = req.body;
+      const { filename } = req.file;
+      if(!filename)
+        return res.status(401).send({ message: "A foto é obrigatória!" });
 
+      const { username, email, password, name, surname, typeUser } = req.body;
       if (!email || !username || !password || !name || !surname || !typeUser)
         return res
           .status(401)
@@ -24,9 +27,11 @@ module.exports = {
         return res.status(400).send({ message: "Este usuário já existe!" });
 
       const data = req.body;
-      // const user = await User.create(data);
-      // user.password = undefined;
-      return res.send({ data });
+      data.image = filename;
+
+      const user = await User.create(data);
+      user.password = undefined;
+      return res.send(user);
     } catch (error) {
       console.log(error);
       return res
@@ -39,9 +44,7 @@ module.exports = {
     try {
       const { email, password } = req.body;
       if (!email || !password)
-        return res
-          .status(401)
-          .send({ message: "Todos os campos são obrigatórios!" });
+        return res.status(401).send({ message: "Todos os campos são obrigatórios!" });
 
       const user = await User.findOne({ email }).select("+password");
 
@@ -65,6 +68,7 @@ module.exports = {
 
   async update(req, res) {
     try {
+      const { filename } = req.file;
       const { username, typeUser, email } = req.body;
       if (!username || !typeUser || !email)
         return res
@@ -82,6 +86,7 @@ module.exports = {
           .send({ message: "Este e-mail não pode ser utilizado!" });
 
       const data = { username, typeUser, email, updatedAt: Date.now() };
+      data.image = data.image !== filename ? filename : data.image;
       const userRes = await User.findByIdAndUpdate(
         req.params.id,
         {

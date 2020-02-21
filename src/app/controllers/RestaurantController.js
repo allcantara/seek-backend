@@ -8,6 +8,10 @@ const typeUser = require("../../config/typeUser.json");
 module.exports = {
   async store(req, res) {
     try {
+      const { filename } = req.file;
+      if(!filename)
+        return res.status(401).send({ message: "A foto é obrigatória!" });
+
       const {
         user: id,
         name,
@@ -17,17 +21,8 @@ module.exports = {
         addressCep
       } = req.body;
 
-      if (
-        !id ||
-        !name ||
-        !addressName ||
-        !addressNumber ||
-        !addressCity ||
-        !addressCep
-      )
-        return res
-          .status(401)
-          .send({ message: "Todos os campos são obrigatórios!" });
+      if (!id || !name || !addressName || !addressNumber || !addressCity || !addressCep)
+        return res.status(401).send({ message: "Todos os campos são obrigatórios!" });
 
       const userRec = await User.findById(id).select("+typeUser");
 
@@ -45,6 +40,9 @@ module.exports = {
         return res
           .status(401)
           .send({ message: "Já existe um restaurante com este nome!" });
+      
+      const data = req.body;
+      data.image = filename;
 
       const restaurant = await Restaurant.create(req.body);
 
@@ -57,6 +55,7 @@ module.exports = {
 
   async update(req, res) {
     try {
+      const { filename } = req.file;
       const {
         name,
         addressName,
@@ -80,11 +79,13 @@ module.exports = {
         return res
           .status(401)
           .send({ message: "Este restaurante não existe!" });
-
+      
+      const data = req.body;
+      data.image = data.image !== filename ? filename : data.image;
       const restaurant = await Restaurant.findByIdAndUpdate(
         req.params.id,
         {
-          ...req.body,
+          ...data,
           updatedAt: Date.now()
         },
         { new: true }

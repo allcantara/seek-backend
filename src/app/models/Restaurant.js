@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 
 const RestaurantSchema = new mongoose.Schema({
+
+  image: {
+    type: String,
+    required: true,
+  },
+
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -52,7 +58,11 @@ const RestaurantSchema = new mongoose.Schema({
     type: Date,
     default: Date.now()
   }
-});
+}, { toJSON: { virtuals: true } });
+
+RestaurantSchema.virtual('image_url').get(function() {
+  return `http://localhost:3333/files/${this.image}`
+})
 
 const Restaurant = mongoose.model("Restaurant", RestaurantSchema);
 

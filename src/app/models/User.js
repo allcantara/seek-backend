@@ -4,6 +4,11 @@ const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
 
+  image: {
+    type: String,
+    required: true,
+  },
+
   username: {
     type: String,
     required: true,
@@ -68,13 +73,17 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now()
   }
-});
+}, { toJSON: { virtuals: true }});
 
 UserSchema.pre("save", async function(next) {
   const hash = await bcrypt.hash(String(this.password), 10);
   this.password = hash;
   next();
 });
+
+UserSchema.virtual('image_url').get(function() {
+  return `http://localhost:3333/files/${this.image}`
+})
 
 const User = mongoose.model("User", UserSchema);
 

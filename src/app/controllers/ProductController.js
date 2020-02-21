@@ -5,6 +5,7 @@ const Restaurant = require("../models/Restaurant");
 module.exports = {
   async store(req, res) {
     try {
+      const { filename } = req.file;
       const { restaurant: restaurantId, name, ingredients, price } = req.body;
 
       if (!restaurantId || !name || !ingredients || (!price && price <= 0))
@@ -20,6 +21,7 @@ module.exports = {
       const ingredientsList = ingredients.trim().split(", ");
 
       const data = {
+        image: filename,
         restaurant: restaurantId,
         name,
         ingredients: ingredientsList,
@@ -37,28 +39,29 @@ module.exports = {
 
   async update(req, res) {
     try {
+      const { filename } = req.file;
       const { name, ingredients, price } = req.body;
 
       if (!name || !ingredients || (!price && price <= 0))
-        return res
-          .status(401)
-          .send({ message: "Todos os campos são obrigatórios!" });
+        return res.status(401).send({ message: "Todos os campos são obrigatórios!" });
+
+      const productExist = await Product.findById(req.params.id);
+      if(!productExist)
+        return res.status(401).send({ message: "Este produto não existe!" });
 
       const ingredientsList = ingredients.trim().split(", ");
 
       const data = {
+        image: productExist.image !== filename ? filename : productExist.image,
         name,
         ingredients: ingredientsList,
         price,
-        updatedAt: Date.now()
+        updatedAt: Date.now(),
       };
 
       const product = await Product.findByIdAndUpdate(
         req.params.id,
-        {
-          ...data
-        },
-        { new: true }
+        { ...data }, { new: true }
       );
 
       return res.status(200).send(product);
@@ -76,9 +79,7 @@ module.exports = {
 
       await Product.findByIdAndRemove(id);
 
-      return res
-        .status(200)
-        .send({ message: "Registro deletado com sucesso!" });
+      return res.status(200).send({ message: "Registro deletado com sucesso!" });
     } catch (error) {
       console.log(error);
       return res.status(400).send({ message: "Falha na requisição!", error });
