@@ -20,13 +20,13 @@ routes.post("/reset_password", ForgotController.reset);
 
 routes.use(authMiddleware);
 
-routes.put("/user/:id", UserController.update);
+routes.put("/user/:id", upload.single('image'), UserController.update);
 routes.delete("/user/:id", UserController.delete);
 routes.get("/user/:id", UserController.show);
 routes.get("/user", UserController.index);
 
 routes.post("/restaurant", upload.single('image'), RestaurantController.store);
-routes.put("/restaurant/:id", RestaurantController.update);
+routes.put("/restaurant/:id", upload.single('image'), RestaurantController.update);
 routes.delete("/restaurant/:id", RestaurantController.delete);
 routes.get("/restaurant/:id", RestaurantController.show);
 routes.get("/restaurant", RestaurantController.index);
@@ -36,7 +36,7 @@ routes.get("/restaurant/user/:id", RestaurantController.showRestaurantInUser);
 routes.get("/restaurant/products/:id", RestaurantController.indexProducts);
 
 routes.post("/product", upload.single('image'), ProductController.store);
-routes.put("/product/:id", ProductController.update);
+routes.put("/product/:id", upload.single('image'), ProductController.update);
 routes.delete("/product/:id", ProductController.delete);
 routes.get("/product/:id", ProductController.show);
 routes.get("/product", ProductController.index);

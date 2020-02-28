@@ -1,7 +1,7 @@
+// @ts-nocheck
 const Purchase = require("../models/Purchase");
 const Product = require("../models/Product");
 const ItemPurchase = require("../models/ItemPurchase");
-// @ts-ignore
 const devicesConfig = require("../../config/devices.json");
 
 const statusConfig = require("../../config/status.json");

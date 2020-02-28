@@ -10,7 +10,7 @@ module.exports = {
     try {
       const { filename } = req.file;
       if(!filename)
-        return res.status(401).send({ message: "A foto é obrigatória!" });
+        return res.status(202).send({ message: "A foto é obrigatória!" });
 
       const {
         user: id,
@@ -21,15 +21,15 @@ module.exports = {
         addressCep
       } = req.body;
 
+      console.log(req.body)
+
       if (!id || !name || !addressName || !addressNumber || !addressCity || !addressCep)
-        return res.status(401).send({ message: "Todos os campos são obrigatórios!" });
+        return res.status(202).send({ message: "Todos os campos são obrigatórios!" });
 
       const userRec = await User.findById(id).select("+typeUser");
 
       if (!userRec)
-        return res
-          .status(401)
-          .send({ message: "Um usuário existente deve ser vinculado!" });
+        return res.status(401).send({ message: "Um usuário existente deve ser vinculado!" });
 
       if (userRec.typeUser !== typeUser.ADMIN)
         return res.status(401).send({
@@ -55,33 +55,18 @@ module.exports = {
 
   async update(req, res) {
     try {
-      const { filename } = req.file;
-      const {
-        name,
-        addressName,
-        addressNumber,
-        addressCity,
-        addressCep
-      } = req.body;
+      const { name, addressName, addressNumber, addressCity, addressCep } = req.body;
 
-      if (
-        !name ||
-        !addressName ||
-        !addressNumber ||
-        !addressCity ||
-        !addressCep
-      )
-        return res
-          .status(401)
-          .send({ message: "Todos os campos são obrigatórios!" });
+      if (!name || !addressName || !addressNumber || !addressCity || !addressCep)
+        return res.status(202).send({ message: "Todos os campos são obrigatórios!" });
 
-      if (!(await Restaurant.findById(req.params.id)))
-        return res
-          .status(401)
-          .send({ message: "Este restaurante não existe!" });
+      const restaurantExist = await Restaurant.findById(req.params.id)
+
+      if (!restaurantExist)
+        return res.status(202).send({ message: "Este restaurante não existe!" });
       
       const data = req.body;
-      data.image = data.image !== filename ? filename : data.image;
+      data.image = !req.file ? restaurantExist.image : req.file.filename;
       const restaurant = await Restaurant.findByIdAndUpdate(
         req.params.id,
         {
@@ -163,9 +148,7 @@ module.exports = {
       const restaurant = await Restaurant.findOne({ user: id })
 
       if (!restaurant)
-        return res
-          .status(202)
-          .send({ message: "Este restaurante não existe!" });
+        return res.status(202).send({ message: "Nenhum restaurante cadastrado!" });
 
       return res.status(200).send(restaurant);
     } catch (error) {
