@@ -21,7 +21,6 @@ module.exports = {
         addressCep
       } = req.body;
 
-      console.log(req.body)
 
       if (!id || !name || !addressName || !addressNumber || !addressCity || !addressCep)
         return res.status(202).send({ message: "Todos os campos são obrigatórios!" });
@@ -29,17 +28,15 @@ module.exports = {
       const userRec = await User.findById(id).select("+typeUser");
 
       if (!userRec)
-        return res.status(401).send({ message: "Um usuário existente deve ser vinculado!" });
+        return res.status(202).send({ message: "Um usuário existente deve ser vinculado!" });
 
       if (userRec.typeUser !== typeUser.ADMIN)
-        return res.status(401).send({
+        return res.status(202).send({
           message: "Este usuário não tem permissão para ser vinculado!"
         });
 
       if (await Restaurant.findOne({ name }))
-        return res
-          .status(401)
-          .send({ message: "Já existe um restaurante com este nome!" });
+        return res.status(202).send({ message: "Já existe um restaurante com este nome!" });
       
       const data = req.body;
       data.image = filename;
@@ -87,15 +84,11 @@ module.exports = {
     try {
       const { id } = req.params;
       if (!(await Restaurant.findById(id)))
-        return res
-          .status(400)
-          .send({ message: "Este restaurante não existe!" });
+        return res.status(202).send({ message: "Este restaurante não existe!" });
 
       await Restaurant.findByIdAndRemove(id);
 
-      return res
-        .status(200)
-        .send({ message: "Registro deletado com sucesso!" });
+      return res.status(200).send({ message: "Registro deletado com sucesso!" });
     } catch (error) {
       console.log(error);
       return res.status(400).send({ message: "Falha na requisição!", error });
@@ -108,9 +101,7 @@ module.exports = {
       const restaurant = await Restaurant.findById(id).populate("user"); // EAGER
 
       if (!restaurant)
-        return res
-          .status(400)
-          .send({ message: "Este restaurante não existe!" });
+        return res.status(202).send({ message: "Este restaurante não existe!" });
 
       return res.status(200).send(restaurant);
     } catch (error) {
