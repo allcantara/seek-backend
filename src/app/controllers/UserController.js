@@ -47,7 +47,7 @@ module.exports = {
     try {
       const { email, password } = req.body
       if (!email || !password)
-        return res.status(203).send({ message: "Todos os campos são obrigatórios!" })
+        return res.status(202).send({ message: "Todos os campos são obrigatórios!" })
 
       const user = await User.findOne({ email }).select("+password")
 
@@ -55,11 +55,11 @@ module.exports = {
         return res.status(202).send({ message: "Este usuário não existe!" })
 
       if (!(await bcrypt.compare(password, user.password)))
-        return res.status(203).send({ message: "Senha incorreta!" })
+        return res.status(202).send({ message: "Senha incorreta!" })
 
       user.password = undefined
 
-      return res.send({
+      return res.status(200).send({
         user,
         token: generateToken(user.id)
       })
