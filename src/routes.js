@@ -24,6 +24,8 @@ routes.put("/user/:id", upload.single('image'), UserController.update);
 routes.delete("/user/:id", UserController.delete);
 routes.get("/user/:id", UserController.show);
 routes.get("/user", UserController.index);
+routes.get("/user/restaurant/:id", UserController.indexUsersInRestaurant);
+routes.put("/vincule/restaurant/user/:id", UserController.vinculeRestaurantInUser);
 
 routes.post("/restaurant", upload.single('image'), RestaurantController.store);
 routes.put("/restaurant/:id", upload.single('image'), RestaurantController.update);
@@ -40,6 +42,7 @@ routes.put("/product/:id", upload.single('image'), ProductController.update);
 routes.delete("/product/:id", ProductController.delete);
 routes.get("/product/:id", ProductController.show);
 routes.get("/product", ProductController.index);
+routes.get("/product/restaurant/:id", ProductController.indexProductsInRestaurant);
 
 routes.post("/purchase", PurchaseController.store);
 routes.put("/purchase/:id", PurchaseController.update);

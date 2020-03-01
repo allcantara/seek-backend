@@ -56,24 +56,19 @@ module.exports = {
   async reset(req, res) {
     try {
       const { email, token, password } = req.body;
-      const user = await User.findOne({ email }).select(
-        "+passwordResetToken passwordResetExpires"
-      );
+      
+      const user = await User.findOne({ email }).select(['passwordResetToken', 'passwordResetExpires'])
 
       if (!user)
-        return res.status(400).send({ message: "Este usuário não existe!" });
+        return res.status(202).send({ message: "Este usuário não existe!" });
 
-      if (token !== user.passwordResetToken)
-        return res
-          .status(401)
-          .send({ message: "O token de alteração é inválido!" });
+      console.log(token, user.passwordResetToken)
+      if (token !== user.passwordResetToken)  
+        return res.status(202).send({ message: "O token de alteração é inválido!" });
 
       if (new Date() > user.passwordResetExpires)
-        return res
-          .status(401)
-          .send({
-            message:
-              "Token expirado! Por favor, solicite uma nova mudança de senha!"
+        return res.status(202).send({
+            message: "Token expirado! Por favor, solicite uma nova mudança de senha!"
           });
 
       user.password = password;

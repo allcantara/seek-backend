@@ -41,7 +41,11 @@ module.exports = {
       const data = req.body;
       data.image = filename;
 
+      
       const restaurant = await Restaurant.create(req.body);
+      
+      userRec.restaurant = restaurant._id
+      await userRec.save()
 
       return res.status(200).send(restaurant);
     } catch (error) {

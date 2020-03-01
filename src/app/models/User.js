@@ -9,6 +9,12 @@ const UserSchema = new mongoose.Schema({
     required: true,
   },
 
+  restaurant: {
+    type: mongoose.Types.ObjectId,
+    ref: 'Restaurant',
+    required: false,
+  },
+
   username: {
     type: String,
     required: true,

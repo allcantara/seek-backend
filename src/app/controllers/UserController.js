@@ -29,6 +29,7 @@ module.exports = {
 
       const data = req.body
       data.image = filename
+      data.restaurant = null
       // data.passwordResetToken = ''
       // data.passwordResetExpires = null
 
@@ -141,6 +142,40 @@ module.exports = {
       const users = await User.find()
 
       return res.status(200).send(users)
+    } catch (error) {
+      console.log(error)
+      return res.status(400).send({ message: "Falha na requisição!", error })
+    }
+  },
+
+  async indexUsersInRestaurant(req, res) {
+    try {
+      const users = await User.find({ restaurant: req.params.id })
+
+      return res.status(200).send(users)
+    } catch (error) {
+      console.log(error)
+      return res.status(400).send({ message: "Falha na requisição!", error })
+    }
+  },
+
+  async vinculeRestaurantInUser(req, res) {
+    try {
+      const { restaurant } = req.body
+      if (!restaurant)
+        return res.status(202).send({ message: "Não foi possível identificar o restaurante!" })
+
+      const user = await User.findById(req.params.id)
+
+      if (!user)
+        return res.status(202).send({ message: "Este usuário não existe!" })
+
+      const userRes = await User.findByIdAndUpdate(req.params.id, {
+        restaurant,
+        updatedAt: Date.now()
+      }, { new: true })
+
+      return res.status(200).send(userRes)
     } catch (error) {
       console.log(error)
       return res.status(400).send({ message: "Falha na requisição!", error })

@@ -115,5 +115,22 @@ module.exports = {
       console.log(error)
       return res.status(400).send({ message: "Falha na requisição!", error })
     }
+  },
+
+  async indexProductsInRestaurant(req, res) {
+    try {
+      console.log(req.params.id)
+      const products = await Product.find({ restaurant: req.params.id })
+
+      products.map(product => {
+        const ingredients = product.ingredients.join(", ")
+        product.ingredients = ingredients
+      })
+
+      return res.status(200).send(products)
+    } catch (error) {
+      console.log(error)
+      return res.status(400).send({ message: "Falha na requisição!", error })
+    }
   }
 }
