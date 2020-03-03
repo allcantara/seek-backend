@@ -1,6 +1,7 @@
 // @ts-nocheck
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const host = require('../../constants/ip')
 
 const UserSchema = new mongoose.Schema({
 
@@ -69,6 +70,11 @@ const UserSchema = new mongoose.Schema({
     type: Date,
   },
 
+  firstAccess: {
+    type: Boolean,
+    default: true
+  },
+
   createdAt: {
     type: Date,
     default: Date.now()
@@ -86,7 +92,7 @@ UserSchema.pre("save", async function(next) {
 });
 
 UserSchema.virtual('image_url').get(function() {
-  return `http://localhost:3333/files/${this.image}`
+  return `http://${host.IP}:3333/files/${this.image}`
 })
 
 const User = mongoose.model("User", UserSchema);

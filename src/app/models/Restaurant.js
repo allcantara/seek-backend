@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const host = require('../../constants/ip')
 
 const RestaurantSchema = new mongoose.Schema({
 
@@ -61,7 +62,7 @@ const RestaurantSchema = new mongoose.Schema({
 }, { toJSON: { virtuals: true } });
 
 RestaurantSchema.virtual('image_url').get(function() {
-  return `http://localhost:3333/files/${this.image}`
+  return `http://${host.IP}:3333/files/${this.image}`
 })
 
 const Restaurant = mongoose.model("Restaurant", RestaurantSchema);
