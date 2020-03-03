@@ -119,7 +119,6 @@ module.exports = {
 
   async indexProductsInRestaurant(req, res) {
     try {
-      console.log(req.params.id)
       const products = await Product.find({ restaurant: req.params.id })
 
       products.map(product => {

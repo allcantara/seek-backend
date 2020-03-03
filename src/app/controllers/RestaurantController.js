@@ -43,9 +43,12 @@ module.exports = {
 
       
       const restaurant = await Restaurant.create(req.body);
-      
-      userRec.restaurant = restaurant._id
-      await userRec.save()
+
+      await User.findByIdAndUpdate(userRec._id, {
+        $set: {
+          restaurant: restaurant._id
+        }
+      })
 
       return res.status(200).send(restaurant);
     } catch (error) {
