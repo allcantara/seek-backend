@@ -39,9 +39,7 @@ module.exports = {
         clientName
       );
       if (valid.error)
-        return res
-          .status(401)
-          .send({ error: valid.error, message: valid.message });
+        return res.status(202).send({ error: valid.error, message: valid.message });
 
       await Promise.all(
         productsList.map(async prod => {
