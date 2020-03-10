@@ -79,6 +79,7 @@ module.exports = {
     try {
       let products = [];
       const { id: purchaseId } = req.params;
+
       const {
         restaurant: restaurantId,
         user: userId,
@@ -100,21 +101,18 @@ module.exports = {
         tableNumber,
         clientName
       );
+
       if (valid.error)
-        return res
-          .status(401)
-          .send({ error: valid.error, message: valid.message });
+        return res.status(202).send({ error: valid.error, message: valid.message });
 
       const purchase = await Purchase.findById(purchaseId).populate("products");
 
       if (!purchase)
-        return res
-          .status(401)
-          .send({ message: "Esta compra não foi cadastrada!" });
+        return res.status(202).send({ message: "Esta compra não foi cadastrada!" });
 
       const validatePurchase = validadePurchaseAfterOrder(purchase);
       if (!validatePurchase.isValid)
-        return res.status(401).send({ message: validatePurchase.message });
+        return res.status(202).send({ message: validatePurchase.message });
 
       purchase.products = [];
 
@@ -161,8 +159,9 @@ module.exports = {
     try {
       const { id } = req.params;
       const purchase = await Purchase.findById(id).populate(["products"]);
+
       if (!purchase)
-        return res.status(400).send({ message: "Esta compra não existe!" });
+        return res.status(202).send({ message: "Esta compra não existe!" });
 
       await Promise.all(
         purchase.products.map(async item => {
@@ -196,21 +195,17 @@ module.exports = {
       const { id } = req.params;
       const purchase = await Purchase.findById(id);
       if (!purchase)
-        return res
-          .status(400)
-          .send({ message: "Esta compra não esta cadastrada!" });
+        return res.status(202).send({ message: "Esta compra não esta cadastrada!" });
 
       const validatePurchase = validadePurchaseAfterOrder(purchase);
       if (!validatePurchase.isValid)
-        return res.status(401).send({ message: validatePurchase.message });
+        return res.status(202).send({ message: validatePurchase.message });
 
       await Purchase.findByIdAndUpdate(id, {
         status: statusConfig.CANCELED
       });
 
-      return res
-        .status(200)
-        .send({ message: "Registro cancelado com sucesso!" });
+      return res.status(200).send({ message: "Registro cancelado com sucesso!" });
     } catch (error) {
       console.log(error);
       return res.status(400).send({ message: "Falha na requisição!", error });
@@ -222,21 +217,18 @@ module.exports = {
       const { id } = req.params;
       const purchase = await Purchase.findById(id);
       if (!purchase)
-        return res
-          .status(400)
-          .send({ message: "Esta compra não esta cadastrada!" });
+        return res.status(202).send({ message: "Esta compra não esta cadastrada!" });
 
       const validatePurchase = validadePurchaseAfterOrder(purchase);
+
       if (!validatePurchase.isValid)
-        return res.status(401).send({ message: validatePurchase.message });
+        return res.status(202).send({ message: validatePurchase.message });
 
       await Purchase.findByIdAndUpdate(id, {
         status: statusConfig.FINISHED
       });
 
-      return res
-        .status(200)
-        .send({ message: "Registro finalizado com sucesso!" });
+      return res.status(200).send({ message: "Registro finalizado com sucesso!" });
     } catch (error) {
       console.log(error);
       return res.status(400).send({ message: "Falha na requisição!", error });
@@ -248,17 +240,17 @@ module.exports = {
       const { id } = req.params;
       const { delay } = req.body;
       const purchase = await Purchase.findById(id);
+      
       if (!purchase)
-        return res
-          .status(400)
-          .send({ message: "Esta compra não esta cadastrada!" });
+        return res.status(202).send({ message: "Esta compra não esta cadastrada!" });
 
       const validatePurchase = validadePurchaseAfterOrder(purchase);
+
       if (!validatePurchase.isValid)
-        return res.status(401).send({ message: validatePurchase.message });
+        return res.status(202).send({ message: validatePurchase.message });
 
       if (purchase.status === statusConfig.DELAY)
-        return res.status(401).send({ message: "O atraso já foi informado!" });
+        return res.status(202).send({ message: "O atraso já foi informado!" });
 
       const dateTimeDelay = new Date();
       dateTimeDelay.setMinutes(dateTimeDelay.getMinutes() + parseInt(delay));

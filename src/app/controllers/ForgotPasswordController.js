@@ -68,8 +68,8 @@ module.exports = {
 
       if (new Date() > user.passwordResetExpires)
         return res.status(202).send({
-            message: "Token expirado! Por favor, solicite uma nova mudança de senha!"
-          });
+          message: "Token expirado! Por favor, solicite uma nova mudança de senha!"
+        });
 
       user.password = password;
       user.updatedAt = Date.now();
